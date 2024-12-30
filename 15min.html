@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CO Emissions Dashboard</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <div class="header">
+
+            <div class="title-box">
+                <h1>EMISSION DATA OF LAST 15 MINUTES</h1>
+            </div>
+        </div>
+        <label for="page">Dashboard<b> : </b></label>
+        <select name="page" id="page" onchange="window.location.href=this.value">
+            <option>select dashboard</option>
+            <option value="index.html">Session Overview</option>
+            <option value="hist.html">historical data</option>
+            <option value="15min.html">Data of last 15 Minutes</option>
+        </select>
+        <label for="Sensor">Select Sensor<b> : </b></label>
+        <select name="Sensor" id="Sensor" onchange="changevalue()">
+            <option value="0">Carbon Monoxide(CO)</option>
+            <option value="1">Carbon Dioxoide(CO2)</option>
+        </select>
+
+
+
+        <!--=meta http-equiv="refresh" content="10"-->
+
+        <div class="info-boxes">
+            <div class="info-box">
+                <h2>Latest Time</h2>
+                <div class="value" id="latest-time">Loading...</div>
+            </div>
+            <div class="info-box">
+                <h2>CO (PPM)</h2>
+                <div class="value" id="current-emission">Loading...</div>
+            </div>
+            <div class="info-box">
+                <h2>CO2 (PPM)</h2>
+                <div class="value" id="CO2">Loading...</div>
+            </div>
+            <div class="info-box">
+                <h2>Temperature (°C)</h2>
+                <div class="value" id="Temperature">Loading...</div>
+            </div>
+            <div class="info-box">
+                <h2>Humidity (%)</h2>
+                <div class="value" id="humidity">Loading...</div>
+            </div>
+        </div>
+        <div class="charts">
+            <div class="line">
+                <div class="chart-container">
+                    <h2>Emissions of Last 15 Minutes</h2>
+                    <div id="line-chart">
+                    </div>
+                    <div class="tooltip"></div>
+                </div>
+            </div>
+            <div class="pi">
+                <div class="chart-container">
+                    <div class="pi-chart-container">
+                        <div id="pi-chart15">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="d3graph.js"></script>
+</body>
+
+</html>

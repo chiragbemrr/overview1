@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CO Emissions Dashboard</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <div class="dashboard">
+
+        <div class="header">
+
+            <div class="title-box">
+                <h1>CO EMISSION HISTORICAL DATA</h1>
+            </div>
+        </div>
+        <label for="page">Dashboard</label>
+
+        <select name="page" id="page" onChange="window.location.href=this.value">
+            <option>select dashboard</option>
+            <option value="index.html">Session Overview</option>
+            <option value="hist.html">historical data</option>
+            <option value="15min.html">Data of last 15 Minutes</option>
+        </select>
+        <label for="Sensor">Select Sensor<b> : </b></label>
+        <select name="Sensor" id="Sensor1" onchange="changevalue1()">
+            <option value="0">Carbon Monoxide(CO)</option>
+            <option value="1">Carbon Dioxoide(CO2)</option>
+        </select>
+        <!--=meta http-equiv="refresh" content="10"-->
+
+        <div class="info-boxes">
+            <div class="info-box">
+                <h2>Latest Time</h2>
+                <div class="value" id="latest-time">Loading...</div>
+            </div>
+            <div class="info-box">
+                <h2>Current Emission (PPM)</h2>
+                <div class="value" id="current-emission">Loading...</div>
+            </div>
+            <div class="info-box">
+                <h2>Air Quality</h2>
+                <div class="value" id="air-quality">Loading...</div>
+            </div>
+        </div>
+        <div class="chart-container-2">
+            <h2>Maximum And Minimum Emission Values Over Date</h2>
+            <div id="line-chart-mm"></div>
+            <div class="slider-container">
+                <input type="range" id="slider2" min="0" max="0" step="1" value="0" class="slider" />
+            </div>
+        </div>
+        <br>
+        <div class="charts">
+            <div class="content">
+                <div class="chart-container">
+                    <div id="graph-title" class="graph-title">Average CO Emission In PPM Over Date</div>
+                    <div id="graph"></div>
+
+                    <div class="tooltip"></div>
+                    <div class="slider-container">
+                        <input type="range" class="slider" id="dateSlider">
+                        <div id="sliderLabel"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="pi">
+                <div class="chart-container">
+                    <div class="pi-chart-container">
+                        <div id="pi-chart">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+    </div>
+    <script src="d3graph.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Overview</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="dashboard">
+
+        <div class="header">
+
+            <div class="title-box">
+                <h1>SESSIONS OVERVIEW</h1>
+            </div>
+        </div>
+        <label for="page">Dashboard<b> : </b></label>
+
+        <select name="page" id="page" onChange="window.location.href=this.value">
+            <option>select dashboard</option>
+            <option value="index.html">Session Overview</option>
+            <option value="hist.html">Historical Data</option>
+            <option value="15min.html">Data of last 15 Minutes</option>
+        </select>
+        <label for="Sensor">Select Sensor<b> : </b></label>
+        <select name="Sensor" id="Sensor" onchange="changevalue()">
+            <option value="0">Carbon Monoxide(CO)</option>
+            <option value="1">Carbon Dioxoide(CO2)</option>
+        </select>
+        <label for="SessionDropDown">Select a Session:</label>
+        <select id="SessionDropDown" onchange="changedata()">
+            <option value="" disabled selected>Select a session</option>
+        </select>
+        <!--=meta http-equiv="refresh" content="10"-->
+
+        <div class="info-boxes">
+            <div class="info-box">
+                <h2>Start Time</h2>
+                <div class="value" id="stime">Loading...</div>
+            </div>
+            <div class="info-box">
+                <h2>Current value</h2>
+                <div class="value" id="currvalue">Loading...</div>
+            </div>
+            <div class="info-box">
+                <h2>Sensor Name</h2>
+                <div class="value" id="Sensorname">Loading...</div>
+            </div>
+            <div class="info-box">
+                <h2>Unit Of Measurement</h2>
+                <div class="value" id="unit">Loading...</div>
+            </div>
+
+        </div>
+        <div class="info-boxes">
+            <div class="info-box">
+                <h2>End Time</h2>
+                <div class="value" id="etime">Loading...</div>
+            </div>
+            <div class="info-box">
+                <h2>Minimum Value</h2>
+                <div class="value" id="minvalue">Loading...</div>
+            </div>
+            <div class="info-box">
+                <h2>Average Value</h2>
+                <div class="value" id="avgvalue">Loading...</div>
+            </div>
+            <div class="info-box">
+                <h2>Maximum Value</h2>
+                <div class="value" id="maxvalue">Loading...</div>
+            </div>
+        </div>
+        <div class="chart-container-2">
+            <div id="line-chart"></div>
+            <div class="slider-container">
+                <input type="range" id="slider2" min="0" max="0" step="1" value="0" class="slider" />
+            </div>
+        </div>
+        <script src="session.js"></script>
+</body>
+
+</html>
