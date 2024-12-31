@@ -18,10 +18,6 @@ s_name.text(Sensor);
 unit.text(unit1);
 
 
-
-
-
-
 function formatDateTime(isoDate) {
     const date = new Date(isoDate);
 
@@ -67,25 +63,36 @@ const svg_mm = d3.select("#line-chart")
     .append("g")
     .attr("transform", `translate(${margin1.left},${margin1.top})`);
 
-// tooltip1 setup
+// Initialize tooltip
 const tooltip1 = d3.select("body").append("div")
+    .attr("class", "tooltip")
     .style("position", "absolute")
     .style("visibility", "hidden")
     .style("background", "white")
     .style("border", "1px solid #ccc")
     .style("padding", "5px")
     .style("border-radius", "4px")
-    .style("font-size", "12px");
-
+    .style("font-size", "12px")
+    .style("z-index", "1000")
+    .style("box-shadow", "0px 2px 5px rgba(0, 0, 0, 0.3)")
+    .style("color", "black");
 
 async function createLineGraphWithSlider(dataUrl, pollutant) {
     try {
+        console.log(pollutant);
+        // Load and process data
         const rawData = dataUrl;
 
+        // Update meta-information (start time, end time, current value)
         if (rawData.length > 0) {
-            const starttime = rawData[0].time; // First data point
-            const endtime = rawData[rawData.length - 1].time; // Last data point
-            var currval = rawData[rawData.length - 1].CO;
+            const starttime = rawData[0].time;
+            const endtime = rawData[rawData.length - 1].time;
+            if (pollutant == "CO2") {
+                var currval = rawData[rawData.length - 1].CO2;
+            } else {
+                var currval = rawData[rawData.length - 1].CO;
+            }
+
             S_time.text(formatDateTime(starttime));
             E_time.text(formatDateTime(endtime));
             Curr_value.text(Number(currval).toFixed(2));
@@ -93,35 +100,35 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
 
         // Parse the data
         const parsedData = rawData.map(d => ({
-            date: parseISTToGMT(d.time[0]), // Raw timestamp as Date object
-            emission: pollutant === "CO" ? +d.CO : +d.CO2, // Adjust logic if needed
+            date: parseISTToGMT(d.time[0]),
+            og: d.time,
+            emission: pollutant === "CO2" ? +d.CO2 : +d.CO,
         }));
 
+        // Calculate statistics
         const totalEmission = parsedData.length;
-
-        const avgEmission = parsedData.reduce((sum, d) => sum + d.emission, 0) / totalEmission; // Calculate the average
-        const minEmission = Math.min(...parsedData.map(d => d.emission)); // Find the minimum emission
-        const maxEmission = Math.max(...parsedData.map(d => d.emission)); // Find the maximum emission
+        const avgEmission = parsedData.reduce((sum, d) => sum + d.emission, 0) / totalEmission;
+        const minEmission = Math.min(...parsedData.map(d => d.emission));
+        const maxEmission = Math.max(...parsedData.map(d => d.emission));
 
         Max_value.text(Number(maxEmission).toFixed(2));
         Min_value.text(Number(minEmission).toFixed(2));
         Avg_value.text(Number(avgEmission).toFixed(2));
 
-        console.log(parsedData);
+        // Clear any existing chart elements
         svg_mm.selectAll("*").remove();
 
-        const pointsPerSegment = 40; // Max 40 points per segment
-        // const totalSegments = Math.max(1, Math.ceil(parsedData.length / pointsPerSegment)); // Calculate total segments
+        const pointsPerSegment = 40;
 
         // Set up scales
         const xScale = d3.scaleTime().range([0, width1]);
         const yScale = d3.scaleLinear().range([height11, 0]);
 
         // Define axes
-        const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y-%m-%d %H:%M:%S")); // Full timestamp
+        const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y-%m-%d %H:%M:%S"));
         const yAxis = d3.axisLeft(yScale);
 
-        // Append axes to SVG
+        // Append axes
         const xAxisGroup = svg_mm.append("g").attr("transform", `translate(0,${height11})`);
         const yAxisGroup = svg_mm.append("g");
 
@@ -143,16 +150,13 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
             .x(d => xScale(d.date))
             .y(d => yScale(d.emission));
 
-        // Path for the line
+        // Append line path
         const path = svg_mm.append("path")
             .attr("fill", "none")
             .attr("stroke", "steelblue")
             .attr("stroke-width", 2);
 
-        // Tooltip initialization
-        const tooltip1 = d3.select("body").append("div").attr("class", "tooltip").style("opacity", 0);
-
-        // Update function
+        // Update chart function
         function updateChart(startIndex) {
             const visibleData = parsedData.slice(startIndex, startIndex + pointsPerSegment);
 
@@ -166,10 +170,10 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
             xAxisGroup.call(xAxis);
             yAxisGroup.call(yAxis);
 
-            // Update the line path
+            // Update line path
             path.datum(visibleData).attr("d", line);
 
-            // Update circles for tooltip interaction
+            // Update circles for interaction
             svg_mm.selectAll(".circle").remove();
             svg_mm.selectAll(".circle")
                 .data(visibleData)
@@ -181,7 +185,7 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
                 .attr("fill", "steelblue")
                 .on("mouseover", function (event, d) {
                     tooltip1.style("visibility", "visible")
-                        .html(`Timestamp: ${formatDateTime(d.date)}<br>Emission: ${d.emission.toFixed(2)} ppm`);
+                        .html(`Timestamp: ${formatDateTime(d.og)}<br>Emission: ${d.emission.toFixed(2)} ppm`);
                 })
                 .on("mousemove", function (event) {
                     tooltip1.style("left", `${event.pageX + 10}px`)
@@ -192,19 +196,20 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
                 });
         }
 
-        // Initialize the slider
+        // Initialize slider
         const slider = d3.select("#slider2")
             .attr("type", "range")
             .attr("min", 0)
-            .attr("max", parsedData.length - pointsPerSegment) // Set max to allow scrolling the entire data range
+            .attr("max", parsedData.length - pointsPerSegment)
             .attr("step", 1)
-            .property("value", parsedData.length - pointsPerSegment) // Default to the last segment
+            .property("value", parsedData.length - pointsPerSegment)
             .on("input", function () {
                 updateChart(+this.value);
             });
 
-        // Update the chart with the last segment
-        updateChart(parsedData.length - pointsPerSegment); // Start with the last segment
+        // Render the last segment by default
+        updateChart(parsedData.length - pointsPerSegment);
+
     } catch (error) {
         console.error("Error fetching or processing data:", error);
     }
@@ -212,16 +217,13 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
 
 
 
-
-
-
 const SessionDropDown = document.getElementById("SessionDropDown");
 
 // Fetch and populate session data
-async function populateSessionDropdown(dataUrl) {
+async function populateSessionDropdown(dataUrl, Sensor) {
     const SessionData = await createsession(dataUrl);
     const keys = Object.keys(SessionData); // Get all keys
-    createLineGraphWithSlider(SessionData[keys[keys.length - 1]], "CO");
+    createLineGraphWithSlider(SessionData[keys[keys.length - 1]], Sensor);
     for (let key in SessionData) {
         let option = document.createElement("option");
         option.setAttribute('value', key); // Use the key (formatted date) as the value
@@ -285,4 +287,17 @@ async function createsession(dataUrl) {
 }
 
 // Call the function to populate the dropdown
-populateSessionDropdown(sdata); // Replace 'dataUrl' with your actual URL
+populateSessionDropdown(sdata, Sensor); // Replace 'dataUrl' with your actual URL
+//setInterval(populateSessionDropdown, 20000, sdata, Sensor);
+
+function changevalue() {
+    Sensor = "CO";
+    if (document.getElementById("Sensor").value == "1") {
+        Sensor = "CO2";
+    }
+    else {
+        Sensor = "CO";
+    }
+    s_name.text(Sensor);
+    populateSessionDropdown(sdata, Sensor);
+}
