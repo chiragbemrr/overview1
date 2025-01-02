@@ -1,6 +1,6 @@
 var Sensor = "CO";
 var unit1 = "Parts Per Million (PPM)";
-const sdata = '/api/emissions/session';
+const sdata = 'https://server-edve.onrender.com/api/emissions/session';
 
 const s_name = d3.select("#Sensorname");
 const unit = d3.select("#unit");
