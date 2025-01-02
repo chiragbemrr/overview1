@@ -18,14 +18,15 @@ const slider = d3.select("#dateSlider");
 const s_name = d3.select("#Sensorname");
 const unit = d3.select("#unit");
 
-const WIDTH = 1100;
-const HEIGHT = 248;
+const container1 = document.querySelector('.content');//(container1.clientWidth)
 const MARGIN = { top: 20, right: 30, bottom: 70, left: 60 };
-const DAYS_TO_SHOW = 50;
+const WIDTH = (container1.clientWidth) - MARGIN.left - MARGIN.right;;
+const HEIGHT = 248;
+const DAYS_TO_SHOW = parseInt(WIDTH / 44);
 
 async function fetchData(g_data) {
     try {
-        const response = await fetch('https://server-edve.onrender.com/api/emissions/latest');
+        const response = await fetch(g_data);
         const data = await response.json();
 
         // Format and update the latest time
@@ -232,8 +233,9 @@ function updateDateRangeLabel(visibleData) {
 
 
 // Set line chart dimensions
+const container2 = document.querySelector('.line');//(container1.clientWidth)
 const margin = { top: 20, right: 30, bottom: 50, left: 60 },
-    width = 1200 - margin.left - margin.right,
+    width = (container2.clientWidth) - margin.left - margin.right,
     height = 400 - margin.top - margin.bottom;
 
 // Append SVG
@@ -379,9 +381,9 @@ async function fetchAndRenderDatap() {
 
         const pieData = Object.entries(p_data).map(([key, value]) => ({ category: key, count: value }));
         const total = pieData.reduce((sum, d) => sum + d.count, 0);
-
-        const p_width = 347;
-        const p_height = 347;
+        const container3 = document.querySelector('.pi');//(container1.clientWidth)
+        const p_width = (container3.clientWidth);
+        const p_height = (container3.clientWidth);
         const p_radius = Math.min(p_width, p_height) / 2;
 
         const customColors = {
@@ -475,8 +477,9 @@ async function fetchAndRenderDatap1(get_data, st) {
         const pieData = Object.entries(p_data).map(([key, value]) => ({ category: key, count: value }));
         const total = pieData.reduce((sum, d) => sum + d.count, 0);
 
-        const p_width = 347;
-        const p_height = 347;
+        const container3 = document.querySelector('.pi');//(container1.clientWidth)
+        const p_width = (container3.clientWidth);
+        const p_height = (container3.clientWidth);
         const p_radius = Math.min(p_width, p_height) / 2;
 
         const customColors = {
@@ -605,8 +608,9 @@ setInterval(fetchAndRenderDatap1, 20000, graphdata, Sensor);
 
 
 // Set margins and dimensions for the SVG
+const container4 = document.querySelector('.chart-container-2 ');//(container4.clientWidth)
 const margin1 = { top: 20, right: 50, bottom: 70, left: 80 },
-    width1 = 1890 - margin1.left - margin1.right,
+    width1 = (container4.clientWidth) - margin1.left - margin1.right,
     height11 = 300 - margin1.top - margin1.bottom;
 
 // Append SVG to the container
@@ -640,7 +644,7 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
             max: pollutant === "CO" ? +d.max_co : +d.max_co2,
         }));
 
-        const pointsPerSegment = 40;  // This can be adjusted as per your needs
+        const pointsPerSegment = parseInt((width1)/45);  // This can be adjusted as per your needs
         // const totalSegments = Math.max(1, Math.ceil(parsedData.length / daysPerSegment));
 
         // Set up scales
