@@ -52,7 +52,7 @@ function parseISTToGMT(datee) {
 }
 // Set margins and dimensions for the SVG
 const margin1 = { top: 20, right: 50, bottom: 70, left: 80 },
-    width1 = 1890 - margin1.left - margin1.right,
+    width1 = ((screen.width * 98) / 100) - margin1.left - margin1.right,
     height11 = 500 - margin1.top - margin1.bottom;
 
 // Append SVG to the container
