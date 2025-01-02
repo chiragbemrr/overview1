@@ -51,9 +51,10 @@ function parseISTToGMT(datee) {
     }
 }
 // Set margins and dimensions for the SVG
-const margin1 = { top: 20, right: 50, bottom: 70, left: 80 },
-    width1 = ((screen.width * 98) / 100) - margin1.left - margin1.right,
-    height11 = 500 - margin1.top - margin1.bottom;
+const container = document.querySelector('.chart-container-2');
+const margin1 = { top: 20, right: 50, bottom: 70, left: 80 };
+var width1 = (container.clientWidth) - margin1.left - margin1.right;
+const height11 = 500 - margin1.top - margin1.bottom;
 
 // Append SVG to the container
 const svg_mm = d3.select("#line-chart")
@@ -118,7 +119,7 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
         // Clear any existing chart elements
         svg_mm.selectAll("*").remove();
 
-        const pointsPerSegment = 40;
+        const pointsPerSegment = parseInt(width1 / 45);
 
         // Set up scales
         const xScale = d3.scaleTime().range([0, width1]);
