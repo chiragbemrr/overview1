@@ -267,7 +267,7 @@ async function fetchlinegraph(get_data, st, svg_line) {
             og: d.time,
             emission: +d.emission    // Convert emission to a number
         }));
-        console.log(parsedData);
+        //console.log(parsedData);
 
 
         // Set up scales
