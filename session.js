@@ -52,8 +52,10 @@ function parseISTToGMT(datee) {
 }
 // Set margins and dimensions for the SVG
 const container = document.querySelector('.chart-container-2');
+
 const margin1 = { top: 20, right: 50, bottom: 70, left: 80 };
 var width1 = (container.clientWidth) - margin1.left - margin1.right;
+console.log(width1);
 const height11 = 500 - margin1.top - margin1.bottom;
 
 // Append SVG to the container
@@ -80,7 +82,7 @@ const tooltip1 = d3.select("body").append("div")
 
 async function createLineGraphWithSlider(dataUrl, pollutant) {
     try {
-        console.log(pollutant);
+        //console.log(pollutant);
         // Load and process data
         const rawData = dataUrl;
 
