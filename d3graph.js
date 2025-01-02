@@ -1,7 +1,7 @@
 //data api
-let CO_data = '/api/emissions/daily-averages';
-let CO_data_15 = '/api/emissions/15min';
-let CO2_data = '/api/emissions/15minco2';
+let CO_data = 'https://server-edve.onrender.com/api/emissions/daily-averages';
+let CO_data_15 = 'https://server-edve.onrender.com/api/emissions/15min';
+let CO2_data = 'https://server-edve.onrender.com/api/emissions/15minco2';
 var graphdata = CO_data_15;
 var Sensor = "CO";
 var unit1 = "Parts Per Million (PPM)";
@@ -25,7 +25,7 @@ const DAYS_TO_SHOW = 50;
 
 async function fetchData(g_data) {
     try {
-        const response = await fetch('/api/emissions/latest');
+        const response = await fetch('https://server-edve.onrender.com/api/emissions/latest');
         const data = await response.json();
 
         // Format and update the latest time
@@ -68,18 +68,21 @@ async function fetchData(g_data) {
             CO2.style("color", "#eca438");
         }
 
-        // Fetch graph data
-        const graphResponse = await fetch(g_data);
-        const dailyData = await graphResponse.json();
-        initializeGraphWithSlider(dailyData);
-
     } catch (error) {
         console.error('Error:', error);
     }
 }
-
 // Initialize
 fetchData(CO_data);
+setInterval(fetchData, 20000, CO_data);
+
+// Fetch graph data
+async function fetchbargraphdata(g_data) {
+    const graphResponse = await fetch(g_data);
+    const dailyData = await graphResponse.json();
+    initializeGraphWithSlider(dailyData);
+}
+fetchbargraphdata(CO_data);
 
 function formatDate(isoDate) {
     const date = new Date(isoDate);
@@ -370,7 +373,7 @@ function categorizeEmissions(data, sensor) {
 
 async function fetchAndRenderDatap() {
     try {
-        const response_p = await fetch('/api/emissions/pi');
+        const response_p = await fetch('https://server-edve.onrender.com/api/emissions/pi');
         const data1 = await response_p.json();
         const p_data = categorizeEmissions(data1, "CO");
 
@@ -597,27 +600,9 @@ function changevalue() {
 }
 fetchlinegraph(graphdata, Sensor, svg_line_15);
 fetchAndRenderDatap1(graphdata, Sensor);
+setInterval(fetchlinegraph, 20000, graphdata, Sensor, svg_line_15);
+setInterval(fetchAndRenderDatap1, 20000, graphdata, Sensor);
 
-/*
-const SessionDropDown = document.getElementById("SessionDropDown");
-
-const SessionData = {
-    "1": "🇦🇺",
-    "2": "🇨🇦",
-    "3": "🇬🇧",
-    "4": "🇺🇸",
-    "5": "ab"
-}
-for (let key in SessionData) {
-    let option = document.createElement("option");
-    option.setAttribute('value', SessionData[key]);
-
-    let optionText = document.createTextNode(key);
-    option.appendChild(optionText);
-
-    SessionDropDown.appendChild(option);
-}
-*/
 
 // Set margins and dimensions for the SVG
 const margin1 = { top: 20, right: 50, bottom: 70, left: 80 },
