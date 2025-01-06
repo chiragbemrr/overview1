@@ -17,6 +17,9 @@ const Session = d3.select("#sessiondropdown");
 s_name.text(Sensor);
 unit.text(unit1);
 
+//slider for line graph
+d3.select("#sliderLabel2")
+    .text("Adjust the slider to view previous data");
 
 function formatDateTime(isoDate) {
     const date = new Date(isoDate);
@@ -53,10 +56,10 @@ function parseISTToGMT(datee) {
 // Set margins and dimensions for the SVG
 const container = document.querySelector('.chart-container-2');
 
-const margin1 = { top: 20, right: 50, bottom: 70, left: 80 };
+const margin1 = { top: 30, right: 50, bottom: 20, left: 60 };
 var width1 = (container.clientWidth) - margin1.left - margin1.right;
 console.log(width1);
-const height11 = 500 - margin1.top - margin1.bottom;
+const height11 = 450 - margin1.top - margin1.bottom;
 
 // Append SVG to the container
 const svg_mm = d3.select("#line-chart")
@@ -128,26 +131,29 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
         const yScale = d3.scaleLinear().range([height11, 0]);
 
         // Define axes
-        const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y-%m-%d %H:%M:%S"));
+        const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%m-%d %H:%M:%S"));
         const yAxis = d3.axisLeft(yScale);
 
         // Append axes
-        const xAxisGroup = svg_mm.append("g").attr("transform", `translate(0,${height11})`);
+        const xAxisGroup = svg_mm.append("g")
+            .attr("transform", `translate(0,${height11})`)
+            .call(xAxis);
         const yAxisGroup = svg_mm.append("g");
-
+        // Rotate the x-axis tick labels
+        /*
         // Add axis labels
         svg_mm.append("text")
-            .attr("transform", `translate(${width1 / 2},${height11 + margin1.bottom - 20})`)
+            .attr("transform", `translate(${width1 / 2},${height11 + margin1.bottom - 10})`)
             .style("text-anchor", "middle")
             .text("Timestamp");
-
+            */
         svg_mm.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", -margin1.left + 20)
-            .attr("x", -height11 / 2)
-            .style("text-anchor", "middle")
-            .text("Emission (PPM)");
-
+            .attr("x", -30)
+            .attr("y", -10)
+            .attr("fill", "currentColor")
+            .attr("text-anchor", "start")
+            .style("font-size", "10px") // Add font size here
+            .text("↑ Emission(PPM)");
         // Line generator
         const line = d3.line()
             .x(d => xScale(d.date))
