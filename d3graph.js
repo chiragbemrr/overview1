@@ -265,7 +265,7 @@ async function fetchAndRenderDatap() {
         const customColors = {
             Good: "#28b858cc",
             Acceptable: "#6495f1",
-            Unhealthy: "#dfa145"
+            Unhealthy: "#7a0000"
         };
 
         const p_svg = d3.select("#pi-chart")
@@ -336,10 +336,12 @@ async function fetchAndRenderDatap() {
 
 fetchAndRenderDatap();
 
-
+//slider for line graph
+d3.select("#sliderLabel3")
+    .text("Adjust the slider to view previous data");
 // Set margins and dimensions for the SVG
 const container4 = document.querySelector('.chart-container-2');//(container4.clientWidth)
-const margin1 = { top: 20, right: 50, bottom: 70, left: 80 },
+const margin1 = { top: 30, right: 50, bottom: 50, left: 60 },
     width1 = (container4.clientWidth) - margin1.left - margin1.right,
     height11 = 300 - margin1.top - margin1.bottom;
 
@@ -395,17 +397,20 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
             .attr("transform", `translate(${width1},0)`);
 
         // Add X and Y axis labels
+        /*
         svg_mm.append("text")
             .attr("transform", `translate(${width1 / 2},${height11 + margin1.bottom - 20})`)
             .style("text-anchor", "middle")
             .text("Date");
+            */
 
         svg_mm.append("text")
-            .attr("transform", "rotate(-90)")
-            .attr("y", -margin1.left + 20)
-            .attr("x", -height11 / 2)
-            .style("text-anchor", "middle")
-            .text("Emission (PPM)");
+             .attr("x", -30)
+            .attr("y", -10)
+            .attr("fill", "currentColor")
+            .attr("text-anchor", "start")
+            .style("font-size", "10px") // Add font size here
+            .text("↑ Emission(PPM)");
 
         // Define line generators
         const maxLine = d3.line()
