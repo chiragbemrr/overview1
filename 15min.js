@@ -66,7 +66,7 @@ async function fetchData(g_data) {
 }
 // Initialize
 fetchData(CO_data);
-//setInterval(fetchData, 20000, CO_data);
+setInterval(fetchData, 20000, CO_data);
 
 function parseISTToGMT(istDateStr) {
     const [day, month, year, hour, minute, second] = istDateStr.match(/\d+/g).map(Number);
@@ -301,6 +301,11 @@ async function fetchAndRenderDatap1(get_data, st) {
         // Update labels
         const labels = p_svg.selectAll("text").data(pie(pieData));
 
+        // Clear any existing labels before appending a new one
+        d3.select("#pi-chart15 svg")
+            .selectAll("text")  // Select all text elements
+            .remove();  // Remove them
+
         d3.select("#pi-chart15 svg")
             .append("text")
             .attr("x", p_width / 2)
@@ -373,12 +378,15 @@ function changevalue() {
         graphdata = CO2_data;
         Sensor = "CO2";
     }
-    //d3.clear();
-    fetchlinegraph(graphdata, Sensor, svg_line_15);
-    fetchAndRenderDatap1(graphdata, Sensor);
+    updateGraph()
 }
 fetchlinegraph(graphdata, Sensor, svg_line_15);
 fetchAndRenderDatap1(graphdata, Sensor);
-//setInterval(fetchlinegraph, 20000, graphdata, Sensor, svg_line_15);
-//setInterval(fetchAndRenderDatap1, 20000, graphdata, Sensor);
+function updateGraph() {
+    fetchlinegraph(graphdata, Sensor, svg_line_15);
+    fetchAndRenderDatap1(graphdata, Sensor);
+}
+
+setInterval(updateGraph, 20000);
+
 
