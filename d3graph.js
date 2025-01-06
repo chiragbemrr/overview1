@@ -264,8 +264,8 @@ async function fetchAndRenderDatap() {
 
         const customColors = {
             Good: "#28b858cc",
-            Acceptable: "#6495f1",
-            Unhealthy: "#7a0000"
+            Acceptable: "#dfa145",
+            Unhealthy: "#6495f1"
         };
 
         const p_svg = d3.select("#pi-chart")
