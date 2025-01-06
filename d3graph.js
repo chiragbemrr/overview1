@@ -36,7 +36,7 @@ async function fetchData() {
         var air_quality;
         if (data_1 > 50) {
             air_quality = "Unhealthy";
-            airquality.style("color", "red"); // Red for high emissions
+            airquality.style("color", "#b64a4a"); // Red for high emissions
             currentEmissionDisplay.style("color", "red");
         } else if (data_1 < 15) {
             var air_quality = "Good";
@@ -52,7 +52,7 @@ async function fetchData() {
         airquality.text(air_quality);
 
         if (data_2 > 1200) {
-            CO2.style("color", "red");
+            CO2.style("color", "#b64a4a");
         } else if (data_2 < 800) {
             CO2.style("color", "#5fdd38");
         } else {
@@ -263,9 +263,9 @@ async function fetchAndRenderDatap() {
         const p_radius = Math.min(p_width, p_height) / 2;
 
         const customColors = {
-            Good: "#28b858cc",
+             Good: "#28b858cc",
             Acceptable: "#dfa145",
-            Unhealthy: "#6495f1"
+            Unhealthy: "#b64a4a"
         };
 
         const p_svg = d3.select("#pi-chart")
@@ -341,7 +341,7 @@ d3.select("#sliderLabel3")
     .text("Adjust the slider to view previous data");
 // Set margins and dimensions for the SVG
 const container4 = document.querySelector('.chart-container-2');//(container4.clientWidth)
-const margin1 = { top: 30, right: 50, bottom: 50, left: 60 },
+const margin1 = { top: 30, right: 50, bottom: 20, left: 60 },
     width1 = (container4.clientWidth) - margin1.left - margin1.right,
     height11 = 300 - margin1.top - margin1.bottom;
 
