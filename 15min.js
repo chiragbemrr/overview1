@@ -237,6 +237,10 @@ function categorizeEmissions(data, sensor) {
 
     return categories;
 }
+const container3 = document.querySelector('.pi');//(container1.clientWidth)
+const p_width = (container3.clientWidth) / 1.87;
+const p_height = (container3.clientWidth) / 1.87;
+const p_radius = Math.min(p_width, p_height) / 2;
 async function fetchAndRenderDatap1(get_data, st) {
     try {
         const response_p = await fetch(get_data);
@@ -254,10 +258,7 @@ async function fetchAndRenderDatap1(get_data, st) {
         const pieData = Object.entries(p_data).map(([key, value]) => ({ category: key, count: value }));
         const total = pieData.reduce((sum, d) => sum + d.count, 0);
 
-        const container3 = document.querySelector('.pi');//(container1.clientWidth)
-        const p_width = (container3.clientWidth) / 1.87;
-        const p_height = (container3.clientWidth) / 1.87;
-        const p_radius = Math.min(p_width, p_height) / 2;
+
 
         const customColors = {
             Good: "#28b858cc",
@@ -300,20 +301,8 @@ async function fetchAndRenderDatap1(get_data, st) {
 
         // Update labels
         const labels = p_svg.selectAll("text").data(pie(pieData));
-
         // Clear any existing labels before appending a new one
-        d3.select("#pi-chart15 svg")
-            .selectAll("text")  // Select all text elements
-            .remove();  // Remove them
 
-        d3.select("#pi-chart15 svg")
-            .append("text")
-            .attr("x", p_width / 2)
-            .attr("y", p_height + 30)
-            .attr("text-anchor", "middle")
-            .style("font-size", "16px")
-            .style("font-weight", "bold")
-            .text("Emissions Category Breakdown");
 
         labels.attr("transform", d => `translate(${arc.centroid(d)})`)
             .text(d => `${((d.data.count / total) * 100).toFixed(1)}%`);
@@ -327,6 +316,16 @@ async function fetchAndRenderDatap1(get_data, st) {
             .text(d => `${((d.data.count / total) * 100).toFixed(1)}%`);
 
         labels.exit().remove();
+        // Clear any existing title before appending a new one
+        p_svg.selectAll("text.title").remove();
+        // Add or update the chart title
+        p_svg.append("text")
+            .attr("class", "title")  // Add a class for the title
+            .attr("y", p_width - 140)  // Position above the chart; adjust as needed
+            .attr("text-anchor", "middle")
+            .style("font-size", "14px")
+            .style("font-weight", "bold")
+            .text("Emissions Category Breakdown");
 
         // Update legend
         var legendGroup = d3.select("#pi-chart15 svg").select("g.legend");
