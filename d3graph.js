@@ -341,7 +341,7 @@ d3.select("#sliderLabel3")
     .text("Adjust the slider to view previous data");
 // Set margins and dimensions for the SVG
 const container4 = document.querySelector('.chart-container-2');//(container4.clientWidth)
-const margin1 = { top: 30, right: 50, bottom: 20, left: 60 },
+const margin1 = { top: 30, right: 50, bottom: 50, left: 60 },
     width1 = (container4.clientWidth) - margin1.left - margin1.right,
     height11 = 300 - margin1.top - margin1.bottom;
 
@@ -480,8 +480,10 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
             yScaleMax.domain([0, d3.max(currentData, d => d.max)]);
             yScaleMin.domain([0, d3.max(currentData, d => d.min)]);
 
-            // Update axes
-            xAxisGroup.call(xAxis);
+             // Update axes
+            xAxisGroup.call(xAxis).selectAll("text")
+                .style("text-anchor", "end")
+                .attr("transform", "rotate(-45)");
             yAxisMaxGroup.call(yAxisMax);
             yAxisMinGroup.call(yAxisMin);
 
