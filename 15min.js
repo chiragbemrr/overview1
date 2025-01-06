@@ -6,6 +6,7 @@ var graphdata = CO_data_15;
 var Sensor = "CO";
 var unit1 = "Parts Per Million (PPM)";
 
+
 // Cache DOM selections and constants
 const latestTimeDisplay = d3.select("#latest-time");
 const currentEmissionDisplay = d3.select("#current-emission");
@@ -37,12 +38,12 @@ async function fetchData(g_data) {
         var air_quality;
         if (data_1 > 50) {
             air_quality = "Unhealthy";
-            airquality.style("color", "#b64a4a"); // Red for high emissions
+            airquality.style("color", "#b64a4a"); // #b64a4a for high emissions
             currentEmissionDisplay.style("color", "#b64a4a");
         } else if (data_1 < 15) {
             var air_quality = "Good";
-            airquality.style("color", "#5fdd38"); // Green for low emissions
-            currentEmissionDisplay.style("color", "#28b858cc");
+            airquality.style("color", "#28b858cc"); // Green for low emissions
+            currentEmissionDisplay.style("color", "#5fdd38");
 
         } else {
             air_quality = "Acceptable"; // Yellow for medium emissions
@@ -66,7 +67,7 @@ async function fetchData(g_data) {
 }
 // Initialize
 fetchData(CO_data);
-setInterval(fetchData, 20000, CO_data);
+//setInterval(fetchData, 20000, CO_data);
 
 function parseISTToGMT(istDateStr) {
     const [day, month, year, hour, minute, second] = istDateStr.match(/\d+/g).map(Number);
@@ -378,6 +379,9 @@ function changevalue() {
         Sensor = "CO2";
     }
     updateGraph()
+    //d3.clear();
+    //fetchlinegraph(graphdata, Sensor, svg_line_15);
+    //fetchAndRenderDatap1(graphdata, Sensor);
 }
 fetchlinegraph(graphdata, Sensor, svg_line_15);
 fetchAndRenderDatap1(graphdata, Sensor);
@@ -387,5 +391,4 @@ function updateGraph() {
 }
 
 setInterval(updateGraph, 20000);
-
 
