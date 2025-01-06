@@ -38,11 +38,11 @@ async function fetchData(g_data) {
         if (data_1 > 50) {
             air_quality = "Unhealthy";
             airquality.style("color", "#b64a4a"); // Red for high emissions
-            currentEmissionDisplay.style("color", "red");
+            currentEmissionDisplay.style("color", "#b64a4a");
         } else if (data_1 < 15) {
             var air_quality = "Good";
             airquality.style("color", "#5fdd38"); // Green for low emissions
-            currentEmissionDisplay.style("color", "#5fdd38");
+            currentEmissionDisplay.style("color", "#28b858cc");
 
         } else {
             air_quality = "Acceptable"; // Yellow for medium emissions
@@ -55,7 +55,7 @@ async function fetchData(g_data) {
         if (data_2 > 1200) {
             CO2.style("color", "#b64a4a");
         } else if (data_2 < 800) {
-            CO2.style("color", "#5fdd38");
+            CO2.style("color", "#28b858cc");
         } else {
             CO2.style("color", "#eca438");
         }
