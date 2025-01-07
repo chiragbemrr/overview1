@@ -131,7 +131,7 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
         const yScale = d3.scaleLinear().range([height11, 0]);
 
         // Define axes
-        const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%m-%d %H:%M:%S"));
+        const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%d-%m %H:%M:%S"));
         const yAxis = d3.axisLeft(yScale);
 
         // Append axes
