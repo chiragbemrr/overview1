@@ -318,7 +318,7 @@ async function fetchAndRenderDatap1(get_data, st) {
 
         labels.exit().remove();
        // Clear any existing title before appending a new one
-        p_svg.selectAll("text.title").remove();
+        d3.select("#pi-chart15 svg").select(".title").remove();
         // Add or update the chart title
         // Add label below the chart
         d3.select("#pi-chart15 svg")
