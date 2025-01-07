@@ -317,12 +317,15 @@ async function fetchAndRenderDatap1(get_data, st) {
             .text(d => `${((d.data.count / total) * 100).toFixed(1)}%`);
 
         labels.exit().remove();
-        // Clear any existing title before appending a new one
+       // Clear any existing title before appending a new one
         p_svg.selectAll("text.title").remove();
         // Add or update the chart title
-        p_svg.append("text")
-            .attr("class", "title")  // Add a class for the title
-            .attr("y", p_width - 140)  // Position above the chart; adjust as needed
+        // Add label below the chart
+        d3.select("#pi-chart15 svg")
+            .append("text")
+            .attr("class", "title")
+            .attr("x", p_width / 2)
+            .attr("y", p_height + 30)
             .attr("text-anchor", "middle")
             .style("font-size", "14px")
             .style("font-weight", "bold")
