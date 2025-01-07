@@ -303,9 +303,9 @@ async function fetchAndRenderDatap() {
             .attr("x", p_width / 2)
             .attr("y", p_height + 30)
             .attr("text-anchor", "middle")
-            .style("font-size", "16px")
+            .style("font-size", "14px")
             .style("font-weight", "bold")
-            .text("CO Emissions Category Breakdown");
+            .text("Emissions Category Breakdown");
 
         // Add legend below the main label with circles (adjusting the position to avoid increasing the width)
         const legendGroup = d3.select("#pi-chart svg")
