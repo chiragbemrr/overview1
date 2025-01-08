@@ -67,7 +67,6 @@ async function fetchData(g_data) {
 }
 // Initialize
 fetchData(CO_data);
-setInterval(fetchData, 20000, CO_data);
 
 function parseISTToGMT(istDateStr) {
     const [day, month, year, hour, minute, second] = istDateStr.match(/\d+/g).map(Number);
@@ -391,6 +390,7 @@ fetchAndRenderDatap1(graphdata, Sensor);
 function updateGraph() {
     fetchlinegraph(graphdata, Sensor, svg_line_15);
     fetchAndRenderDatap1(graphdata, Sensor);
+    fetchData(CO_data);
 }
 
 setInterval(updateGraph, 20000);
