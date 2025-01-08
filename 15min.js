@@ -67,7 +67,7 @@ async function fetchData(g_data) {
 }
 // Initialize
 fetchData(CO_data);
-//setInterval(fetchData, 20000, CO_data);
+setInterval(fetchData, 20000, CO_data);
 
 function parseISTToGMT(istDateStr) {
     const [day, month, year, hour, minute, second] = istDateStr.match(/\d+/g).map(Number);
