@@ -44,7 +44,7 @@ body {
 }
 
 .line15 {
-    width: 70%;
+    width: 65%;
     margin-left: 7px;
     padding: 5px;
     background: white;
@@ -56,7 +56,7 @@ body {
 
 .pi {
 
-    width: 29%;
+    width: 34%;
     margin-left: 6px;
     padding: 5px;
     background: white;
@@ -67,7 +67,6 @@ body {
 }
 
 .pi-chart-container {
-    margin:auto;
     text-align:center;
 }
 
