@@ -34,6 +34,10 @@
         <select id="SessionDropDown" onchange="changedata()">
             <option value="" disabled selected>Select a session</option>
         </select>
+        <label for="startDates">Select start date<b> : </b></label>
+        <input type="date" id="startDates" name="startDates" class="cal" onchange="changevalue() " />
+        <label for=" endDates">Select end date<b> : </b></label>
+        <input type="date" id="endDates" name="endDates" class="cal" onchange="changevalue()" />
         <!--=meta http-equiv="refresh" content="10"-->
 
         <div class="info-boxes">
