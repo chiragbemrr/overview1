@@ -12,7 +12,42 @@ const Avg_value = d3.select("#avgvalue");
 const Curr_value = d3.select("#currvalue");
 const Session = d3.select("#sessiondropdown");
 
+document.getElementById('startDates').value = "2018-12-31";
+document.getElementById('startDates').min = "2018-12-31";
+document.getElementById('endDates').min = "2018-12-31";
 
+async function fetchData() {
+    try {
+
+        const response = await fetch('https://server-edve.onrender.com/api/emissions/latest');
+        const data = await response.json();
+
+        // Format and update the latest time
+        const formattedTime = data.latestTime;
+        //console.log(xyz);
+        document.getElementById('endDates').value = formatDate1(formattedTime);
+        document.getElementById('endDates').max = formatDate1(formattedTime);
+        document.getElementById('startDates').max = formatDate1(formattedTime);
+
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+fetchData();
+function formatDate1(isoDate) {
+    const date = new Date(isoDate);
+
+    // Adjust for timezone offset
+    const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+    const adjustedDate = new Date(date.getTime() + userTimezoneOffset);
+
+    // Extract date components
+    const day = adjustedDate.getDate().toString().padStart(2, '0');
+    const month = (adjustedDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = adjustedDate.getFullYear();
+    return `${year}-${day}-${month}`;
+
+}
 
 s_name.text(Sensor);
 unit.text(unit1);
@@ -230,15 +265,27 @@ const SessionDropDown = document.getElementById("SessionDropDown");
 
 // Fetch and populate session data
 async function populateSessionDropdown(dataUrl, Sensor) {
+
+    var sd = new Date(document.getElementById('startDates').value);
+    var ed = new Date(document.getElementById('endDates').value);
+
     const SessionData = await createsession(dataUrl);
     const keys = Object.keys(SessionData); // Get all keys
     createLineGraphWithSlider(SessionData[keys[keys.length - 1]], Sensor);
     for (let key in SessionData) {
-        let option = document.createElement("option");
-        option.setAttribute('value', key); // Use the key (formatted date) as the value
-        let optionText = document.createTextNode(key);
-        option.appendChild(optionText);
-        SessionDropDown.appendChild(option);
+        if (ed.getTime()) {
+            var condition = new Date(key) >= sd && new Date(key) <= ed;
+        }
+        else {
+            var condition = new Date(key) >= sd;
+        }
+        if (condition) {
+            let option = document.createElement("option");
+            option.setAttribute('value', key); // Use the key (formatted date) as the value
+            let optionText = document.createTextNode(key);
+            option.appendChild(optionText);
+            SessionDropDown.appendChild(option);
+        }
     }
 }
 
