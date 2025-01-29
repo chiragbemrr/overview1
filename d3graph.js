@@ -143,7 +143,7 @@ async function changedata_p() {
             date: new Date(d.date), // Parse date into a Date object
             CO_Emissions_ppm: d.CO_Emissions_ppm
         }));
-        console.log(parsedData);
+        //console.log(parsedData);
 
         // Filter data based on date range
         if ((ed.getTime())) {
@@ -361,7 +361,7 @@ async function fetchAndRenderDatap() {
     try {
         const response_p = await changedata_p();
         const data1 = JSON.parse(response_p);
-        console.log(data1);
+       // console.log(data1);
 
         const p_data = categorizeEmissions(data1, "CO");
 
