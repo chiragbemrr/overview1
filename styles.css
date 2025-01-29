@@ -209,6 +209,12 @@ select {
     font-size: 16px;
     padding: 5px;
 }
+.cal {
+    border: 1px solid #ccc;
+    background-color: #f8f8f8;
+    font-size: 16px;
+    padding: 5px;
+}
 
 .tooltip1 {
     position: absolute;
