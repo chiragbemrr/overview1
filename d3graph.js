@@ -12,14 +12,26 @@ const graphContainer = d3.select("#graph");
 const slider = d3.select("#dateSlider");
 
 
+
 const container1 = document.querySelector('.content');//(container1.clientWidth)
 const MARGIN = { top: 20, right: 30, bottom: 70, left: 60 };
 const WIDTH = (container1.clientWidth) - MARGIN.left - MARGIN.right;;
 const HEIGHT = 248;
 const DAYS_TO_SHOW = parseInt(WIDTH / 30);
 
+//slider for line graph
+d3.select("#sliderLabel2")
+    .text("Adjust the slider to view previous data");
+
+document.getElementById('startDate').value = "2018-12-31";
+document.getElementById('startDate').min = "2018-12-31";
+document.getElementById('endDate').min = "2018-12-31";
+
+
+
 async function fetchData() {
     try {
+
         const response = await fetch('https://server-edve.onrender.com/api/emissions/latest');
         const data = await response.json();
 
@@ -28,7 +40,10 @@ async function fetchData() {
         latestTimeDisplay.text(formattedTime);
         // Update emission value
         currentEmissionDisplay.text(Number(data.latestEmission).toFixed(2));
-
+        //console.log(xyz);
+        document.getElementById('endDate').value = formatDate1(formattedTime);
+        document.getElementById('endDate').max = formatDate1(formattedTime);
+        document.getElementById('startDate').max = formatDate1(formattedTime);
 
         var data_1 = Number(data.latestEmission);
         var data_2 = Number(data.CO2);
@@ -36,7 +51,7 @@ async function fetchData() {
         var air_quality;
         if (data_1 > 50) {
             air_quality = "Unhealthy";
-            airquality.style("color", "#b64a4a"); // Red for high emissions
+            airquality.style("color", "red"); // Red for high emissions
             currentEmissionDisplay.style("color", "red");
         } else if (data_1 < 15) {
             var air_quality = "Good";
@@ -52,7 +67,7 @@ async function fetchData() {
         airquality.text(air_quality);
 
         if (data_2 > 1200) {
-            CO2.style("color", "#b64a4a");
+            CO2.style("color", "red");
         } else if (data_2 < 800) {
             CO2.style("color", "#5fdd38");
         } else {
@@ -65,15 +80,94 @@ async function fetchData() {
 }
 // Initialize
 fetchData();
-setInterval(fetchData, 20000);
+//setInterval(fetchData, 20000);'
+
+async function changedate_mm(dataurl, pollutant) {
+    try {
+
+        // Get and format start and end dates
+        var sd = new Date(document.getElementById('startDate').value); // Ensure this is a valid Date object
+        var ed = new Date(document.getElementById('endDate').value);   // Ensure this is a valid Date object
+
+        // Fetch data
+        const response = await fetch(dataurl);
+        const rawData = await response.json();
+
+        //console.log("Raw Data:", rawData);
+
+        // Parse and filter data
+        const parsedData = rawData.map(d => ({
+            date: new Date(d.date), // Parse date into a Date object
+            average: d.average,
+            min: pollutant === "CO" ? +d.min_co : +d.min_co2,
+            max: pollutant === "CO" ? +d.max_co : +d.max_co2,
+        }));
+        //        console.log(ed.getTime());
+
+        // Filter data based on date range
+        if ((ed.getTime())) {
+            //console.log("hello");
+
+            var resultProductData = parsedData.filter(a => a.date >= sd && a.date <= ed);
+        } else {
+            var resultProductData = parsedData.filter(a => a.date >= sd);
+        }
+        //  console.log(resultProductData);
+
+        // Convert filtered data to JSON format
+        // const jsonResponse = JSON(resultProductData);
+
+        // Return JSON data
+        return JSON.stringify(resultProductData);
+
+    } catch (error) {
+        console.error("Error fetching or processing data:", error);
+    }
+}
+async function changedata_p() {
+    try {
+
+        // Get and format start and end dates
+        var sd = new Date(document.getElementById('startDate').value); // Ensure this is a valid Date object
+        var ed = new Date(document.getElementById('endDate').value);   // Ensure this is a valid Date object
+
+        const response_p = await fetch('https://server-edve.onrender.com/api/emissions/pi');
+        const data_p = await response_p.json();
+        //console.log(data_p);
+
+
+        //console.log("Raw Data:", rawData);
+
+        // Parse and filter data
+        const parsedData = data_p.map(d => ({
+            date: new Date(d.date), // Parse date into a Date object
+            CO_Emissions_ppm: d.CO_Emissions_ppm
+        }));
+        console.log(parsedData);
+
+        // Filter data based on date range
+        if ((ed.getTime())) {
+            //console.log("hello");
+
+            var resultProductData = parsedData.filter(a => a.date >= sd && a.date <= ed);
+        } else {
+            var resultProductData = parsedData.filter(a => a.date >= sd);
+        }
+        return JSON.stringify(resultProductData);
+
+    } catch (error) {
+        console.error("Error fetching or processing data:", error);
+    }
+}
 
 // Fetch graph data
-async function fetchbargraphdata(g_data) {
-    const graphResponse = await fetch(g_data);
-    const dailyData = await graphResponse.json();
+async function fetchbargraphdata(dataurl, pollutant) {
+    const graphResponse = await changedate_mm(dataurl, pollutant);
+    const dailyData = await JSON.parse(graphResponse);;
     initializeGraphWithSlider(dailyData);
 }
-fetchbargraphdata(CO_data);
+fetchbargraphdata(CO_data, "CO");
+
 
 function formatDate(isoDate) {
     const date = new Date(isoDate);
@@ -89,6 +183,20 @@ function formatDate(isoDate) {
     return `${day}-${month}-${year}`;
 
 }
+function formatDate1(isoDate) {
+    const date = new Date(isoDate);
+
+    // Adjust for timezone offset
+    const userTimezoneOffset = date.getTimezoneOffset() * 60000;
+    const adjustedDate = new Date(date.getTime() + userTimezoneOffset);
+
+    // Extract date components
+    const day = adjustedDate.getDate().toString().padStart(2, '0');
+    const month = (adjustedDate.getMonth() + 1).toString().padStart(2, '0');
+    const year = adjustedDate.getFullYear();
+    return `${year}-${day}-${month}`;
+
+}
 
 function initializeGraphWithSlider(dailyData) {
     // Set up slider
@@ -97,13 +205,13 @@ function initializeGraphWithSlider(dailyData) {
     slider
         .attr("min", 0)
         .attr("max", maxSliderValue)
-        .attr("value", maxSliderValue)
+        .attr("value", 0)
         .on("input", function () {
             updateGraph(dailyData, +this.value);
         });
 
     // Initial graph render
-    updateGraph(dailyData, maxSliderValue);
+    updateGraph(dailyData, 0);
 }
 
 function formatDateTime(isoDate) {
@@ -142,7 +250,7 @@ function updateGraph(data, startIndex) {
     // Set up scales
     const x = d3.scaleBand()
         .range([0, WIDTH])
-        .domain(visibleData.map(d => d.date))
+        .domain(visibleData.map(d => formatDate(d.date)))
         .padding(0.1);
 
     const y = d3.scaleLinear()
@@ -178,7 +286,7 @@ function updateGraph(data, startIndex) {
         .join("rect")
         .transition()  // Begin transition
         .duration(10000)
-        .attr("x", d => x(d.date))
+        .attr("x", d => x(formatDate(d.date)))
         .attr("y", d => y(d.average))
         .attr("width", x.bandwidth())
         .attr("height", d => HEIGHT - y(d.average))
@@ -186,7 +294,7 @@ function updateGraph(data, startIndex) {
     svg.selectAll("rect")
         .data(visibleData)
         .join("rect")
-        .attr("x", d => x(d.date))
+        .attr("x", d => x(formatDate(d.date)))
         .attr("y", d => y(d.average))
         .attr("width", x.bandwidth())
         .attr("height", d => HEIGHT - y(d.average))
@@ -216,7 +324,7 @@ function updateDateRangeLabel(visibleData) {
     const startDate = visibleData[0].date;
     const endDate = visibleData[visibleData.length - 1].date;
     d3.select("#sliderLabel")
-        .text(`Showing data from ${startDate} to ${endDate}`);
+        .text(`Showing data from ${formatDate(startDate)} to ${formatDate(endDate)}`);
 }
 function categorizeEmissions(data, sensor) {
     const categories = {
@@ -251,8 +359,10 @@ function categorizeEmissions(data, sensor) {
 
 async function fetchAndRenderDatap() {
     try {
-        const response_p = await fetch('https://server-edve.onrender.com/api/emissions/pi');
-        const data1 = await response_p.json();
+        const response_p = await changedata_p();
+        const data1 = JSON.parse(response_p);
+        console.log(data1);
+
         const p_data = categorizeEmissions(data1, "CO");
 
         const pieData = Object.entries(p_data).map(([key, value]) => ({ category: key, count: value }));
@@ -263,10 +373,11 @@ async function fetchAndRenderDatap() {
         const p_radius = Math.min(p_width, p_height) / 2;
 
         const customColors = {
-             Good: "#28b858cc",
+            Good: "#28b858cc",
             Acceptable: "#dfa145",
             Unhealthy: "#b64a4a"
         };
+        d3.select("#pi-chart").selectAll("*").remove();
 
         const p_svg = d3.select("#pi-chart")
             .append("svg")
@@ -303,9 +414,9 @@ async function fetchAndRenderDatap() {
             .attr("x", p_width / 2)
             .attr("y", p_height + 30)
             .attr("text-anchor", "middle")
-            .style("font-size", "14px")
+            .style("font-size", "16px")
             .style("font-weight", "bold")
-            .text("Emissions Category Breakdown");
+            .text("CO Emissions Category Breakdown");
 
         // Add legend below the main label with circles (adjusting the position to avoid increasing the width)
         const legendGroup = d3.select("#pi-chart svg")
@@ -334,11 +445,9 @@ async function fetchAndRenderDatap() {
     }
 }
 
-fetchAndRenderDatap();
+//fetchAndRenderDatap();
 
-//slider for line graph
-d3.select("#sliderLabel3")
-    .text("Adjust the slider to view previous data");
+
 // Set margins and dimensions for the SVG
 const container4 = document.querySelector('.chart-container-2');//(container4.clientWidth)
 const margin1 = { top: 30, right: 50, bottom: 50, left: 60 },
@@ -363,17 +472,29 @@ const tooltip1 = d3.select("body").append("div")
     .style("border-radius", "4px")
     .style("font-size", "12px");
 
+function convertDateFormat(dateString) {
+    // Split the input string into parts
+    const [year, month, day] = dateString.split("-");
+
+    // Rearrange the parts to the desired format
+    const formattedDate = `${day}-${month}-${year}`;
+    return formattedDate;
+}
+
+
 // Fetch and render data
 async function createLineGraphWithSlider(dataUrl, pollutant) {
     try {
-        const response = await fetch(dataUrl);
-        const rawData = await response.json();
+        //var dataUrl1 = changedate_mm(dataUrl, pollutant);
 
-        const parsedData = rawData.map(d => ({
+        // const response = await fetch(dataUrl1);
+        const rawData = await changedate_mm(dataUrl, pollutant);
+        const parsedJson = JSON.parse(rawData);
+
+        const parsedData = parsedJson.map(d => ({
             date: new Date(d.date), // Parse date
-            og: d.time,
-            min: pollutant === "CO" ? +d.min_co : +d.min_co2,
-            max: pollutant === "CO" ? +d.max_co : +d.max_co2,
+            min: d.min,
+            max: d.max,
         }));
 
         const pointsPerSegment = parseInt((width1) / 45);  // This can be adjusted as per your needs
@@ -388,7 +509,7 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
         const xAxis = d3.axisBottom(xScale).tickFormat(d3.timeFormat("%Y-%m-%d"));
         const yAxisMax = d3.axisLeft(yScaleMax);
         const yAxisMin = d3.axisRight(yScaleMin);
-
+        svg_mm.selectAll("*").remove();
         // Append axes to SVG
         const xAxisGroup = svg_mm.append("g")
             .attr("transform", `translate(0,${height11})`);
@@ -402,15 +523,13 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
             .attr("transform", `translate(${width1 / 2},${height11 + margin1.bottom - 20})`)
             .style("text-anchor", "middle")
             .text("Date");
-            */
-
+*/
         svg_mm.append("text")
-             .attr("x", -30)
-            .attr("y", -10)
-            .attr("fill", "currentColor")
-            .attr("text-anchor", "start")
-            .style("font-size", "10px") // Add font size here
-            .text("↑ Emission(PPM)");
+            .attr("transform", "rotate(-90)")
+            .attr("y", -margin1.left + 20)
+            .attr("x", -height11 / 2)
+            .style("text-anchor", "middle")
+            .text("Emission (PPM)");
 
         // Define line generators
         const maxLine = d3.line()
@@ -466,9 +585,14 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
 
         // Update function
         function updateChart(segmentIndex) {
-            // const segmentStart = segmentIndex * pointsPerSegment;
+
             const segmentEnd = segmentIndex + pointsPerSegment;
+
+
+
+
             let currentData = parsedData.slice(segmentIndex, segmentEnd);
+
 
             // Filter out data points where date is missing (invalid date)
             currentData = currentData.filter(d => !isNaN(d.date));
@@ -480,7 +604,7 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
             yScaleMax.domain([0, d3.max(currentData, d => d.max)]);
             yScaleMin.domain([0, d3.max(currentData, d => d.min)]);
 
-             // Update axes
+            // Update axes
             xAxisGroup.call(xAxis).selectAll("text")
                 .style("text-anchor", "end")
                 .attr("transform", "rotate(-45)");
@@ -542,7 +666,7 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
             .attr("min", 0)  // Start from the first segment
             .attr("max", parsedData.length - pointsPerSegment)  // Max value is the total segments - 1
             .attr("step", 1)  // Step size is 1
-            .property("value", parsedData.length - pointsPerSegment)  // Initialize with the last segment
+            .property("value", 0)  // Initialize with the last segment
             .on("input", function () {
                 const currentValue = +this.value;
 
@@ -552,7 +676,7 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
             });
 
         // Initialize chart with the last segment
-        updateChart(parsedData.length - pointsPerSegment);  // Start with the last segment
+        updateChart(0);  // Start with the last segment
 
     } catch (error) {
         console.error("Error fetching or processing data:", error);
@@ -567,6 +691,7 @@ function changevalue1() {
         Sensor = "CO2";
     }
     createLineGraphWithSlider(CO_data, "CO");
+    fetchbargraphdata(CO_data, "CO");
+    fetchAndRenderDatap();
 }
-// Replace with your actual data URL and pollutant type
-createLineGraphWithSlider(CO_data, "CO");
+changevalue1();
