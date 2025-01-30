@@ -93,7 +93,7 @@ const container = document.querySelector('.chart-container-2');
 
 const margin1 = { top: 30, right: 50, bottom: 20, left: 60 };
 var width1 = (container.clientWidth) - margin1.left - margin1.right;
-console.log(width1);
+//console.log(width1);
 const height11 = 450 - margin1.top - margin1.bottom;
 
 // Append SVG to the container
@@ -262,31 +262,65 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
 
 
 const SessionDropDown = document.getElementById("SessionDropDown");
+const SessionDropDown = document.getElementById("SessionDropDown");
 
+function parseCustomDate(dateStr) {
+    let parts = dateStr.split(" "); // Split date and time
+    let dateParts = parts[0].split("-"); // Split day, month, year
+    let timeParts = parts[1].split(":"); // Split hours, minutes, seconds
+
+    return new Date(
+        dateParts[2],  // Year
+        dateParts[1] - 1, // Month (0-based in JS)
+        dateParts[0],  // Day
+        timeParts[0],  // Hours
+        timeParts[1],  // Minutes
+        timeParts[2]   // Seconds
+    );
+}
 // Fetch and populate session data
 async function populateSessionDropdown(dataUrl, Sensor) {
+    SessionDropDown.innerHTML = "";
 
     var sd = new Date(document.getElementById('startDates').value);
-    var ed = new Date(document.getElementById('endDates').value);
 
+    var ed = new Date(document.getElementById('endDates').value);
+    //console.log(ed);
     const SessionData = await createsession(dataUrl);
     const keys = Object.keys(SessionData); // Get all keys
-    createLineGraphWithSlider(SessionData[keys[keys.length - 1]], Sensor);
+    //console.log(keys);
     for (let key in SessionData) {
-        if (ed.getTime()) {
-            var condition = new Date(key) >= sd && new Date(key) <= ed;
+        let sessionDate = parseCustomDate(key); // Ensure parseCustomDate works correctly
+        let sessionDateObj = new Date(sessionDate);
+
+        if (sessionDateObj >= sd) {
+            if (ed.getTime()) {
+                if (sessionDateObj <= ed) {
+                    //console.log("hello");
+                    let option = document.createElement("option");
+                    option.setAttribute('value', key); // Use the key (formatted date) as the value
+                    let optionText = document.createTextNode(key);
+                    option.appendChild(optionText);
+                    SessionDropDown.appendChild(option);
+                }
+
+
+            } else {
+                //console.log(parseCustomDate(key));
+                let option = document.createElement("option");
+                option.setAttribute('value', key); // Use the key (formatted date) as the value
+                let optionText = document.createTextNode(key);
+                option.appendChild(optionText);
+                SessionDropDown.appendChild(option);
+            }
+
         }
-        else {
-            var condition = new Date(key) >= sd;
-        }
-        if (condition) {
-            let option = document.createElement("option");
-            option.setAttribute('value', key); // Use the key (formatted date) as the value
-            let optionText = document.createTextNode(key);
-            option.appendChild(optionText);
-            SessionDropDown.appendChild(option);
-        }
+
+
     }
+    var initline = SessionDropDown.options[SessionDropDown.options.length - 1].value;
+    console.log(SessionDropDown.length);
+    createLineGraphWithSlider(SessionData[initline], Sensor);
 }
 
 async function changedata() {
