@@ -261,7 +261,7 @@ async function createLineGraphWithSlider(dataUrl, pollutant) {
 
 
 
-const SessionDropDown = document.getElementById("SessionDropDown");
+
 const SessionDropDown = document.getElementById("SessionDropDown");
 
 function parseCustomDate(dateStr) {
